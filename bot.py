@@ -155,6 +155,10 @@ class BlumBot:
         task_status = task.get("status")
         if task_id in ignore_tasks:
             return
+
+        if task_status == "NOT_STARTED" and task.get("type") == "PROGRESS_TARGET":
+            return
+
         if task_status == "NOT_STARTED":
             task_status = self.start_task(task)
             countdown(random.randint(1, 3))
