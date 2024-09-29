@@ -76,6 +76,7 @@ class BlumBot:
         data = json.dumps(
             {
                 "query": self.init_data,
+                # "referralToken": "8KRxh44e4M"
             },
         )
         headers["Content-Length"] = str(len(data))
@@ -100,7 +101,10 @@ class BlumBot:
             "Secure your Crypto!": "BEST PROJECT EVER",
             "Forks Explained": "GO GET",
             "Say No to Rug Pull!": "SUPERBLUM",
-            "How to Analyze Crypto?": "VALUE"
+            "How to Analyze Crypto?": "VALUE",
+            "$2.5M+ DOGS Airdrop": "Happydogs",
+            "What Are AMMs?": "Cryptosmart",
+            "Liquidity Pools Guide": "Blumersss"
         }
 
         if task.get("validationType") != "KEYWORD":
@@ -130,9 +134,13 @@ class BlumBot:
 
     def start_task(self, task):
         start_task_url = f"https://earn-domain.blum.codes/api/v1/tasks/{task.get('id')}/start"
-        status = self.make_request(start_task_url, self.headers, "").json().get("status")
-        logger.info(f'started task: {task.get("title")}, status: {status}')
-        return status
+        resp = self.make_request(start_task_url, self.headers, "").json()
+        status = resp.get("status")
+        if resp.get("status"):
+            logger.info(f'started task: {task.get("title")}, status: {status}')
+        else:
+            logger.warning(f'started task: {task.get("title")} error, resp: {resp}')
+        return status if status else task.get('status')
 
     def solve(self, task: dict):
         ignore_tasks = [
@@ -189,7 +197,7 @@ class BlumBot:
                                 self.solve(task)
                             self.solve(t)
                             continue
-                    for task in t.get("tasks"):
+                    for task in t.get("tasks", []):
                         self.solve(task)
 
     def set_proxy(self, proxy=None):
@@ -531,12 +539,6 @@ class BlumBot:
         self.checkin()
         self.get_friend()
 
-        if self.AUTOTASK:
-            self.solve_task()
-
-        if self.JOINTRIBE:
-            self.join_tribe()
-
         status, end_farming_time = self.get_end_farming_time()
         if status:
             self.claim_farming()
@@ -544,6 +546,12 @@ class BlumBot:
 
         if isinstance(end_farming_time, str):
             end_farming_time = self.start_farming()
+
+        if self.AUTOTASK:
+            self.solve_task()
+
+        if self.JOINTRIBE:
+            self.join_tribe()
 
         if self.AUTOGAME:
             while True:
@@ -625,7 +633,7 @@ def main():
     while True:
         list_countdown = []
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=15) as executor:
             # Submit all token processing tasks to the executor
             futures = {
                 executor.submit(process_token, no, token, proxies, use_proxy): no
