@@ -104,7 +104,12 @@ class BlumBot:
             "How to Analyze Crypto?": "VALUE",
             "$2.5M+ DOGS Airdrop": "Happydogs",
             "What Are AMMs?": "Cryptosmart",
-            "Liquidity Pools Guide": "Blumersss"
+            "Liquidity Pools Guide": "Blumersss",
+            "Doxxing? What's that?": "NODOXXING",
+            "Pre-Market Trading?": "WOWBLUM",
+            "Token Burning: How & Why?": "ONFIRE",
+            "How to Memecoin?": "MemeBlum",
+            'Play track & type track name': 'Blum - Big City Life'
         }
 
         if task.get("validationType") != "KEYWORD":
@@ -637,7 +642,7 @@ def main():
     while True:
         list_countdown = []
 
-        with ThreadPoolExecutor(max_workers=15) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             # Submit all token processing tasks to the executor
             futures = {
                 executor.submit(process_token, no, token, proxies, use_proxy): no
